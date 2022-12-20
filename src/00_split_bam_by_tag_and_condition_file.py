@@ -28,7 +28,7 @@
         Name of the column containing the cell name in 'condition_csv'. Defaults to 'Name'.
     bam_tag_flag : string (optional).
         The tag in the bam file that contains the sample barcode. Defaults to 'BC' for zUMIs output.
-    name_part_filer : flag with string (optional)
+    name_part_filer : string (optional)
         Use to limit itself to samples names that contain a particular substring. Defaults to None.
 
 """
@@ -39,9 +39,9 @@ if __name__ == '__main__':
     parser.add_argument('bam_in',type=str,help="Relative path to the directory holding the multiplexed .bam file.")
     parser.add_argument('condition_csv',type=str,help="Relative path to the .csv file containing the mapping between the barcodes and the name of the cells.")
     parser.add_argument('bam_out',type=str,help="Relative path to the folder where the output .bam files per cell are to be saved.")
-    parser.add_argument('condition_tag_col',type=str,default='Barcode',help="Name of the column containing the barcodes in 'condition_csv'. Defaults to 'Barcode'.")
-    parser.add_argument('condition_name_col',type=str,default='Name',help="Name of the column containing the cell name in 'condition_csv'. Defaults to 'Name'.")
-    parser.add_argument('bam_tag_flag',type=str,default='BC',help="The tag in the bam file that contains the sample barcode. Defaults to 'BC' for zUMIs output.")
+    parser.add_argument('--condition_tag_col',type=str,default='Barcode',help="Name of the column containing the barcodes in 'condition_csv'. Defaults to 'Barcode'.")
+    parser.add_argument('--condition_name_col',type=str,default='Name',help="Name of the column containing the cell name in 'condition_csv'. Defaults to 'Name'.")
+    parser.add_argument('--bam_tag_flag',type=str,default='BC',help="The tag in the bam file that contains the sample barcode. Defaults to 'BC' for zUMIs output.")
     parser.add_argument('--name_part_filter',type=str,default=None,help="Use to limit itself to samples names that contain a particular substring. Defaults to None.")
     o = parser.parse_args()
 
