@@ -1,2 +1,19 @@
 bootstrap: docker
 from: fshiau/trim-galore:latest
+
+%runscript
+    ./src/02_run_trim_galore.sh "$@"
+
+%labels
+    Author: Juan Sebastian Diaz Boada
+    juan.sebastian.diaz.boada@ki.se
+
+%help
+    Calls a bash script calling TrimGalore to cut the adaptors of teh cell fastq files.
+
+    Usage
+    -----
+
+    ./02_trim_adapters.sif <path/to/untrimmed_fastq/> <path/to/output> <nodes>
+
+    See ./02_trim_adapters.sif --help for more info.

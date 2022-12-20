@@ -95,9 +95,9 @@ Example:
 
 ### 2. Convert to fastq and concatenate:
 #### Context
-The individual `.bam` files from the *Alignes* and *unmapped* files have to be converted to `fastq.gz` and concatenated.
+The individual `.bam` files from the *Aligned* and *unmapped* files have to be converted to `fastq.gz` and concatenated.
 #### How to run
-This section uses a `samtools` singularity container (`samtools_1.16.sif`) executing the bash script `bam2fastq.sh`
+This section uses a [`samtools`](https://github.com/samtools/samtools) singularity container (`samtools_1.16.sif`) executing the bash script `bam2fastq.sh`
 ```bash
 singularity exec container.sif bash_script.sh <parameters_of_bas_script>
 ```
