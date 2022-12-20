@@ -1,11 +1,36 @@
 #!/bin/bash
 # ============================================================================ #
-# bam2fastq_concat.sh                                                          #
-
-
+# bam2fastq.sh                                                                 #
 # Author: Juan Sebastian Diaz Boada                                            #
 # Creation Date: 8/12/2022                                                     #
 # ============================================================================ #
+
+# Define the help function
+function help {
+  # Print the usage message
+  echo "Usage: $0 [INPUT_DIR][OUTPUT_DIR][NODES]"
+  echo "Converts all of the .bam files in INPUT_DIR into fastq files for the
+        Aligned and unmapped directories. Then concatenates the 2 fastqfiles of the
+        same cell."
+  echo ""
+  # Print a description of the script's parameters
+  echo "Parameters:"
+  echo "  INPUT_DIR     Relative path to the directory containing the single-cell .bam files."
+  echo "  OUTPUT_DIR    Relative path to the directory where the fastq files will be saved."
+  echo "  NODES         Number of nodes for samtools."
+  echo ""
+  # Print the list of options
+  echo "Options:"
+  echo "  -h, --help        display this help and exit"
+  # Exit with a success status code
+  exit 0
+}
+
+# Parse the options and arguments
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  help
+fi
+
 INPUT_DIR=$1
 OUTPUT_DIR=$2
 NODES=$3

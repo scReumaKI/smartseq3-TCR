@@ -76,7 +76,7 @@ which are located in `data/00_SS3_raw_data/<plate>/`
 This step extracts one `.bam` file per cell from each big `.bam` given the barcode and name of each cell.
 #### How to run
 ```
-./env/00_split_bam_SS3.sif path/to/bam/ path/to/barcode/dataframe.csv path/to/output barcode_column name_column BC
+./env/00_split_bam_SS3.sif path/to/bam/ path/to/barcode/dataframe.csv path/to/output --condition_tag_col barcode_column --condition_name_col name_column --bam_tag_flag BC
 ```
 The container calls the python script `/src/00_split_bam_by_tag_and_condition_file.py` internally.
 

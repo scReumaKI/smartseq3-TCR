@@ -1,2 +1,20 @@
 bootstrap: docker
 from: staphb/samtools:1.16
+
+%runscript
+    ./src/01_bam2fsastq.sh "$@"
+
+%labels
+    Author: Juan Sebastian Diaz Boada
+    juan.sebastian.diaz.boada@ki.se
+
+%help
+    Calls a bash script calling samtools that translates .bam files to .fastq
+    files and concatenates them per cell.
+
+    Usage
+    -----
+
+    ./01_merge_fastq.sif <path/to/bams/> <path/to/output> <nodes>
+
+    See ./01_merge_fastq.sif --help for more info.
