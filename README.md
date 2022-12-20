@@ -1,5 +1,5 @@
 # TCR extraction from Smart-seq3 sequencing data
-Instructions fro running smart-seq3 TCR pipeline.
+Instructions for running smart-seq3 TCR pipeline.
 
 ### Expected directory structure
 ```bash
@@ -50,23 +50,17 @@ which are located in `data/00_SS3_output/<plate>/`
 This step extracts one `.bam` file per cell from each big `.bam` given the barcode and name of each cell.
 #### How to run
 ```
-./container.sif path/to/bam/ BC path/to/barcode/dataframe.csv barcode_column name_column path/to/output
+./env/00_split_bam_SS3.sif path/to/bam/ path/to/barcode/dataframe.csv path/to/output barcode_column name_column BC
 ```
-The container is `00_split_bam_SS3.sif` which calls the python script `split_bam_by_tag_and_condition_file.py` internally.
+The container calls the python script `/src/00_split_bam_by_tag_and_condition_file.py` internally.
 
-Inputs:
-+ Path to the big bam file
-+ String literal 'BC' (for barcode. For further information see [here](https://samtools.github.io/hts-specs/SAMv1.pdf))
-+ Path to the `.csv` with the mapping between barcodes (in one columns) and cell names (in another column).
-+ Name of the barcode column
-+ Name of the cell name column
-+ Output directory
+For detailed help, type `./env/00_split_bam_SS3.sif --help` or `singularity run-help env/00_split_bam_SS3.sif`
 
 Example:
 ```bash
 > pwd
-/srv/shared/Common_New/Transcriptomics/TCR-myositis
-> ./env/00_split_bam_SS3.sif data/00_SS3_output/SS3_21_231 SS3_21_231.filtered.tagged.Aligned.out.bam BC data/00_SS3_output/SS3_21_231/P231_barcodes.csv Barcode Name data/01_SS3_splitted_bams/Aligned/SS3_21_231
+/srv/shared/Common_New/Transcriptomics/TCR-myositis/smartseq3
+> ./env/00_split_bam_SS3.sif data/00_SS3_output/SS3_21_231 SS3_21_231.filtered.tagged.Aligned.out.bam data/00_SS3_output/SS3_21_231/P231_barcodes.csv data/01_SS3_splitted_bams/Aligned/SS3_21_231/ Barcode Name BC
 ```
 #### Considerations
 + Execution time on Reuma: ~1 hour for a plate of 384 cells.

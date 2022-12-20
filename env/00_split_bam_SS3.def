@@ -2,7 +2,6 @@ Bootstrap: docker
 From: python:3.9
 
 %post
-    # Install packages here
     pip install pandas
     pip install pysam
     pip install tqdm
@@ -12,20 +11,19 @@ From: python:3.9
     # Modify environment variables here
 
 %runscript
-    # Commands to run when running the container
     ./src/00_split_bam_by_tag_and_condition_file.py "$@"
+
 %labels
-    # Author, contact and other labels
     Author: Juan Sebastian Diaz Boada
     juan.sebastian.diaz.boada@ki.se
 
 %help
-    Calls a python scritp that imports pysam and splits the multiplexed .bam file into 
+    Calls a python script that imports pysam and splits the multiplexed .bam file into
     individual .bam files per cell.
-    
+
     Usage
     -----
 
-    ./00_split_bam_SS3.sif path/to/bam/ BC path/to/barcode/dataframe.csv barcode_column name_column path/to/output
-    
+    ./00_split_bam_SS3.sif <path/to/bam/> <path/to/barcode/dataframe.csv> <path/to/output/>
+
     See ./00_split_bam_SS3.sif --help for more info.
