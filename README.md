@@ -1,52 +1,78 @@
 # TCR extraction from Smart-seq3 sequencing data
-Instructions for running smart-seq3 TCR pipeline.
+Pipeline for extracting TCR using [TraCeR](https://github.com/Teichlab/tracer) from Smart-seq3 sequencing data processed by [zUMIs](https://github.com/sdparekh/zUMIs).
+### Requisites
+A HPC cluster running a version of Linux with [Singularity](https://sylabs.io/singularity/) installed.
 
-### Expected directory structure
+### Expected directory structure (for 3 plates)
 ```bash
 ├── data
-│   ├── 00_SS3_output
-│   │   ├── SS3_21_231
-│   │   │   ├── SS3_21_231.filtered.tagged.Aligned.out.bam
-│   │   │   ├── SS3_21_231.filtered.tagged.unmapped.bam
-│   │   ├── SS3_21_233
-│   │   │   ├── SS3_21_233.filtered.tagged.Aligned.out.bam
-│   │   │   ├── SS3_21_233.filtered.tagged.unmapped.bam
-│   │   └── SS3_21_235
-│   │   │   ├── SS3_21_235.filtered.tagged.Aligned.out.bam
-│   │   │   ├── SS3_21_235.filtered.tagged.unmapped.bam
+│   ├── 00_SS3_raw_data
+│   │   ├── Plate_1
+│   │   │   ├── Plate_1.filtered.tagged.Aligned.out.bam
+│   │   │   ├── Plate_1.filtered.tagged.unmapped.bam
+│   │   │   └── Plate_1_barcodes.csv
+│   │   ├── Plate_2
+│   │   │   ├── Plate_2.filtered.tagged.Aligned.out.bam
+│   │   │   ├── Plate_2.filtered.tagged.unmapped.bam
+│   │   │   └── Plate_2_barcodes.csv
+│   │   └── Plate_3
+│   │   │   ├── Plate_3.filtered.tagged.Aligned.out.bam
+│   │   │   ├── Plate_3.filtered.tagged.unmapped.bam
+│   │   │   └── Plate_3_barcodes.csv
 │   ├── 01_SS3_splitted_bams
-│   │   ├── SS3_21_231
+│   │   ├── Plate_1
 │   │   │   ├── Aligned
 │   │   │   └── unmapped
-│   │   └── SS3_21_233
+│   │   ├── Plate_2
+│   │   │   ├── Aligned
+│   │   │   └── unmapped
+│   │   └── Plate_3
 │   │       ├── Aligned
 │   │       └── unmapped
 │   ├── 02_SS3_merged_fastq
-│   │   ├── SS3_21_231
-│   │   └── SS3_21_233
+│   │   ├── Plate_1
+│   │   ├── Plate_2
+│   │   └── Plate_3
 │   └── 03_SS3_trimmed_fastq
-│       ├── SS3_21_231
-│       └── SS3_21_233
+│   │   ├── Plate_1
+│   │   ├── Plate_2
+│   │   └── Plate_3
+│   └── 04_SS3_Tracer_assembled_cells
+│       ├── Plate_1
+│       ├── Plate_2
+│       └── Plate_3
 ├── env
 │   ├── 00_split_bam_SS3.def
-│   ├── 00_split_bam_SS3.sif
-│   ├── samtools_1.16.sif
-│   └── trimgalore6.7.sif
+│   ├── 01_merge_fastq.def
+│   ├── 02_trim_adapters.def
+│   └── 03_assemble_TCR.def
+├── README.md
+├── results
 └── src
-    ├── bam2fastq.sh
-    ├── run_trim_galore.sh
-    └── split_bam_by_tag_and_condition_file.py
+    ├── 00_split_bam_by_tag_and_condition_file.py
+    ├── 01_bam2fastq.sh
+    ├── 02_run_trim_galore.sh
+    └── test_individual_bam.ipynb
 ```
 
-## Smartseq3
-### 1. Split the bam file
-#### Context
+# Smartseq3
+## 0. Build singularity containers
+After cloning this repository, build the singularity images in the [`env`](env/) folder using the singularity definition files:
+```bash
+singularity build --fakeroot env/00_split_bam_SS3.sif env/00_split_bam_SS3.def
+singularity build --fakeroot env/01_merge_fastq.sif env/01_merge_fastq.def
+singularity build --fakeroot env/02_trim_adapters.sif env/02_trim_adapters.def
+singularity build --fakeroot env/03_assemble_TCR.sif env/03_assemble_TCR.def
+```
+Then move your smartseq3 data to the folder [`data/00_SS3_raw_data/`](data/00_SS3_raw_data/) and to a sub-folder corresponding to a plate.
+## 1. Split the bam file
+### Context
 The output files from the sequence facility are two big `.bam` file per plate:
 ```bash
 <plate>.filtered.tagged.Aligned.out.bam
 <plate>.filtered.tagged.unmapped.bam
 ```
-which are located in `data/00_SS3_output/<plate>/`
+which are located in `data/00_SS3_raw_data/<plate>/`
 This step extracts one `.bam` file per cell from each big `.bam` given the barcode and name of each cell.
 #### How to run
 ```
@@ -60,7 +86,7 @@ Example:
 ```bash
 > pwd
 /srv/shared/Common_New/Transcriptomics/TCR-myositis/smartseq3
-> ./env/00_split_bam_SS3.sif data/00_SS3_output/SS3_21_231 SS3_21_231.filtered.tagged.Aligned.out.bam data/00_SS3_output/SS3_21_231/P231_barcodes.csv data/01_SS3_splitted_bams/Aligned/SS3_21_231/ Barcode Name BC
+> ./env/00_split_bam_SS3.sif data/00_SS3_raw_data/SS3_21_231 SS3_21_231.filtered.tagged.Aligned.out.bam data/00_SS3_raw_data/SS3_21_231/P231_barcodes.csv data/01_SS3_splitted_bams/Aligned/SS3_21_231/ Barcode Name BC
 ```
 #### Considerations
 + Execution time on Reuma: ~1 hour for a plate of 384 cells.
