@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: python:3.9
+
+%post
+    # Install packages here
+    pip install pandas
+    pip install pysam
+    pip install tqdm
+    pip install jupyter
+
+%environment
+    # Modify environment variables here
+
+%runscript
+    # Commands to run when running the container
+    ./src/split_bam_by_tag_and_condition_file.py "$@"
+%labels
+    # Author, contact and other labels
+    Author: Juan Sebastian Diaz Boada
+    juan.sebastian.diaz.boada@ki.se
+
+%help
+    # Brief description of the container

@@ -1,0 +1,20 @@
+# Ignore raw data but keep main data directory structure
+data/00_SS3_output/*
+!data/00_SS3_output/.gitkeep
+data/01_SS3_splitted_bams/*
+!data/01_SS3_splitted_bams/.gitkeep
+data/02_SS3_merged_fastq/*
+!data/02_SS3_merged_fastq/.gitkeep
+data/03_SS3_trimmed_fastq/*
+!data/03_SS3_trimmed_fastq/.gitkeep
+data/04_SS3_Tracer_assembled_cells/*
+!data/04_SS3_Tracer_assembled_cells/.gitkeep
+### Python
+*.ipynb_checkpoints/
+#*cache
+#*#
+#*~
+#*\_\_pycache\_\_
+### Containers
+*.sif
+
