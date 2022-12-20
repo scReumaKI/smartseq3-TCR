@@ -51,7 +51,7 @@ if __name__ == '__main__':
     tag_to_name = dict(zip(CT.loc[:,o.condition_tag_col], CT.loc[:,o.condition_name_col].astype(str)))
 
     bam_in = pysam.AlignmentFile(o.bam_in, "rb",check_sq=False)
-    name_to_bam = {name:pysam.AlignmentFile(o.bam_out_prefix + name + '.bam', "wb", template=bam_in) for name in set(tag_to_name.values())}
+    name_to_bam = {name:pysam.AlignmentFile(o.bam_out + name + '.bam', "wb", template=bam_in) for name in set(tag_to_name.values())}
 
     for aln in tqdm.tqdm(bam_in.fetch(until_eof=True)):
         barcode = aln.get_tag(o.bam_tag_flag)
