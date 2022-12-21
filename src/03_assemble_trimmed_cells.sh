@@ -45,7 +45,7 @@ fi
 for DIR in ${INPUT_DIR}*;do
   CELL=$(basename $DIR)
   R1=${DIR}/${CELL}_R1_val_1.fq.gz
-  R2=${DIR}/${CELL}_R2_val_1.fq.gz
+  R2=${DIR}/${CELL}_R2_val_2.fq.gz
 
   # if [ ! -d $OUTPUT_DIR$CELL ];then
   #   mkdir $OUTPUT_DIR$CELL
