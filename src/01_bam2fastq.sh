@@ -39,8 +39,7 @@ mkdir __temporary_fastq__
 mkdir __temporary_fastq__/__Aligned__
 mkdir __temporary_fastq__/__unmapped__
 echo "Created temporary folders"
-for FILE in ${INPUT_DIR}Aligned/*.bam
-do
+for FILE in ${INPUT_DIR}Aligned/*.bam;do
   NAME=$(basename $FILE .bam)
   # Create fastq files for the aligned bams
   echo "Creating aligned fastq files for cell "$NAME

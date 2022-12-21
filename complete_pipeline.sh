@@ -41,7 +41,7 @@ echo "==========================================================================
 if [ ! -d data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/ ];then
   mkdir data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/
   echo "Created folder for Aligned reads"
-echo "./env/00_split_bam_SS3.sif data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.Aligned.out.bam \ 
+echo "./env/00_split_bam_SS3.sif data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.Aligned.out.bam \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.barcodes.csv \
 data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/"
 # Split unmapped reads file
@@ -62,7 +62,7 @@ echo "==========================================================================
 ./env/figlet.sif "02 Trim adapters with TrimGalore!"
 echo "================================================================================="
 echo "./env/02_trim_adapters.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
-data/03_SS3_trimmed_fastq/${PLATE_NAME}/ $NODES"
+data/03_SS3_trimmed_fastq/${PLATE_NAME}/ 8"
 # 03. TCR assemble
 echo "================================================================================="
 ./env/figlet.sif "03 Assemble TCR with TraCeR"

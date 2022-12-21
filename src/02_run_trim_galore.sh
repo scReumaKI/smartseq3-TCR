@@ -33,8 +33,7 @@ INPUT_DIR=$1
 OUTPUT_DIR=$2
 NODES=$3
 
-for DIR in ${INPUT_DIR}
-do
+for DIR in ${INPUT_DIR}*;do
   CELL=$(basename $DIR)
   echo "======================================================================="
   # Create cell folder if not existing
