@@ -13,7 +13,7 @@ function help {
   echo ""
   # Print a description of the script's parameters
   echo "Parameters:"
-  echo "  INPUT_DIR     Relative path to the directory containing the single-cell fastq files."
+  echo "  INPUT_DIR     Relative path to the directory containing the single-cell folders with fastq files."
   echo "  OUTPUT_DIR    Relative path to the directory where the trimmed fastq files will be saved."
   echo "  NODES         Number of nodes for TrimGalore."
   echo ""
@@ -33,10 +33,8 @@ INPUT_DIR=$1
 OUTPUT_DIR=$2
 NODES=$3
 
-for FILE in ${INPUT_DIR}*.fastq.gz
+for CELL in ${INPUT_DIR}
 do
-  TEMP=$(basename $FILE)
-  CELL="${TEMP%_*}"
   echo "======================================================================="
   # Create cell folder if not existing
   if [ ! -d $OUTPUT_DIR$CELL ];then
@@ -45,6 +43,6 @@ do
   else
     echo "Writting on existing directory $OUTPUT_DIR$CELL"
   fi
-  trim_galore $FILE -o $OUTPUT_DIR$CELL --cores $NODES
+  trim_galore --paired ${INPUT_DIR}/${CELL}/${CELL}_R1.fastq.gz ${INPUT_DIR}/${CELL}/${CELL}_R2.fastq.gz -o $OUTPUT_DIR$CELL --cores $NODES
   echo "Trimmed cell $CELL successfully"
 done
