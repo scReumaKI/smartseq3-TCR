@@ -1,6 +1,9 @@
 BootStrap: docker
 From: teichlab/tracer:latest
 
+%environment
+  export IGDATA=/ncbi-igblast-1.7.0/bin
+
 %runscript
     ./src/03_assemble_trimmed_cells.sh "$@"
 
