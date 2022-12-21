@@ -1,7 +1,19 @@
 BootStrap: docker
 From: teichlab/tracer:latest
 
-%post
+%runscript
+    ./src/03_assemble_trimmed_cells.sh "$@"
 
+%labels
+    Author: Juan Sebastian Diaz Boada
+    juan.sebastian.diaz.boada@ki.se
 
-%environment
+%help
+    Calls TraCeR assemble over the trimmed fastq files for all cells of a plate.
+
+    Usage
+    -----
+
+    ./03_assemble_TCR.sif <path/to/trimmed_fastq/> <path/to/output> <nodes> <loci>
+
+    See ./03_assemble_TCR.sif --help for more info.
