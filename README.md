@@ -39,8 +39,14 @@ A HPC cluster running a version of Linux with [Singularity](https://sylabs.io/si
 │   │   └── Plate_3
 │   └── 04_SS3_Tracer_assembled_cells
 │       ├── Plate_1
+│       │   ├── AB
+│       │   └── GD
 │       ├── Plate_2
+│       │   ├── AB
+│       │   └── GD
 │       └── Plate_3
+│           ├── AB
+│           └── GD
 ├── env
 │   ├── 00_split_bam_SS3.def
 │   ├── 01_merge_fastq.def

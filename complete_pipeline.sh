@@ -67,7 +67,15 @@ data/03_SS3_trimmed_fastq/${PLATE_NAME}/ 8"
 echo "================================================================================="
 ./env/figlet.sif "03 Assemble TCR with TraCeR"
 echo "================================================================================="
+# Assemble alpha-beta
+if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/ ];then
+  mkdir data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/
+  echo "Created folder for AB TCRs"
 echo "./env/03_assemble_TCR.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
-data/03_SS3_trimmed_fastq/${PLATE_NAME}/ $NODES 'AB'"
+data/03_SS3_trimmed_fastq/${PLATE_NAME}/GD $NODES 'AB'"
+# Assemble gamma-delta
+if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/ ];then
+  mkdir data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/
+  echo "Created folder for GD TCRs"
 echo "./env/03_assemble_TCR.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
-data/03_SS3_trimmed_fastq/${PLATE_NAME}/ $NODES 'AB'"
+data/03_SS3_trimmed_fastq/${PLATE_NAME}/GD $NODES 'GD'"
