@@ -54,11 +54,12 @@ do
   -1 __temporary_fastq__/__unmapped__/${NAME}_R1.fastq.gz \
   -2 __temporary_fastq__/__unmapped__/${NAME}_R2.fastq.gz \
   -0 /dev/null -s /dev/null
-
-  cat __temporary_fastq__/__Aligned__/${NAME}_R1.fastq.gz > ${OUTPUT_DIR}${NAME}_R1.fastq.gz
-  cat __temporary_fastq__/__Aligned__/${NAME}_R2.fastq.gz > ${OUTPUT_DIR}${NAME}_R2.fastq.gz
-  cat __temporary_fastq__/__unmapped__/${NAME}_R1.fastq.gz >> ${OUTPUT_DIR}${NAME}_R1.fastq.gz
-  cat __temporary_fastq__/__unmapped__/${NAME}_R2.fastq.gz >> ${OUTPUT_DIR}${NAME}_R2.fastq.gz
+  # Concatenate Aligned and unmapped fastq files
+  mkdir ${OUTPUT_DIR}${NAME}
+  cat __temporary_fastq__/__Aligned__/${NAME}_R1.fastq.gz > ${OUTPUT_DIR}${NAME}/${NAME}_R1.fastq.gz
+  cat __temporary_fastq__/__Aligned__/${NAME}_R2.fastq.gz > ${OUTPUT_DIR}${NAME}/${NAME}_R2.fastq.gz
+  cat __temporary_fastq__/__unmapped__/${NAME}_R1.fastq.gz >> ${OUTPUT_DIR}${NAME}/${NAME}_R1.fastq.gz
+  cat __temporary_fastq__/__unmapped__/${NAME}_R2.fastq.gz >> ${OUTPUT_DIR}${NAME}/${NAME}_R2.fastq.gz
   echo "Concatenated Aligned and unmapped for cell "$NAME
   echo "======================================================================"
   rm __temporary_fastq__/__Aligned__/${NAME}_R1.fastq.gz

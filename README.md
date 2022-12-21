@@ -89,7 +89,7 @@ Example:
 > ./env/00_split_bam_SS3.sif data/00_SS3_raw_data/SS3_21_231 SS3_21_231.filtered.tagged.Aligned.out.bam data/00_SS3_raw_data/SS3_21_231/P231_barcodes.csv data/01_SS3_splitted_bams/Aligned/SS3_21_231/ Barcode Name BC
 ```
 #### Considerations
-+ Execution time on Reuma: ~1 hour for a plate of 384 cells.
++ Execution time on Reuma: ~1:10 hour for a plate of 384 cells.
 + The previous procedure has to be done for the `.Aligned.out.bam` file and for the `.unmapped.bam` file.
 + Multiple instances of this code can be run in parallel on the same machine without interfering with each other
 
