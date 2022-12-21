@@ -33,8 +33,9 @@ INPUT_DIR=$1
 OUTPUT_DIR=$2
 NODES=$3
 
-for CELL in ${INPUT_DIR}
+for DIR in ${INPUT_DIR}
 do
+  CELL=$(basename $DIR)
   echo "======================================================================="
   # Create cell folder if not existing
   if [ ! -d $OUTPUT_DIR$CELL ];then
