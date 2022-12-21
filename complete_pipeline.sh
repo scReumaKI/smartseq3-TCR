@@ -43,14 +43,16 @@ if [ ! -d data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/ ];then
   echo "Created folder for Aligned reads"
 echo "./env/00_split_bam_SS3.sif data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.Aligned.out.bam \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.barcodes.csv \
-data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/"
+data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/ \
+--condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC"
 # Split unmapped reads file
 if [ ! -d data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/ ];then
   mkdir data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/
   echo "Created folder for unmapped reads"
 echo "./env/00_split_bam_SS3.sif data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.unmapped.bam \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.barcodes.csv \
-data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/"
+data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/ \
+--condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC"
 # 01. Translate and merge
 echo "================================================================================="
 ./env/figlet.sif "01 Translate to fastq and merge with samtools"
