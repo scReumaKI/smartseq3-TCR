@@ -17,6 +17,6 @@ From: teichlab/tracer:latest
     Usage
     -----
 
-    ./03_assemble_TCR.sif <path/to/trimmed_fastq/> <path/to/output> <nodes> <loci>
+    ./04_tracer_SS3.sif <path/to/trimmed_fastq/> <path/to/output> <nodes> <loci>
 
-    See ./03_assemble_TCR.sif --help for more info.
+    See ./04_tracer_SS3.sif --help for more info.

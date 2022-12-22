@@ -15,6 +15,6 @@ from: staphb/samtools:1.16
     Usage
     -----
 
-    ./01_merge_fastq.sif <path/to/bams/> <path/to/output> <nodes>
+    ./02_samtools_SS3.sif <path/to/bams/> <path/to/output> <nodes>
 
-    See ./01_merge_fastq.sif --help for more info.
+    See ./02_samtools_SS3.sif --help for more info.

@@ -33,57 +33,88 @@ fi
 
 PLATE_NAME=$1
 NODES=$2
-# 00. SPLIT BAM files
+if [ ! -d data/00_SS3_raw_data/${PLATE_NAME}/ ];then
+  echo "There is no raw data for any plate in data/00_SS3_raw_data/"
+  exit 1
+fi
+# -------------------------------------------------------------------------------------
+# 00. Container building
+singularity build --force --fakeroot env/figlet.sif env/figlet.def
 echo "================================================================================="
-./env/figlet.sif "00 BAM file splitting with pysam"
+./env/figlet.sif "0. Singularity"
+echo "================================================================================="
+singularity build --force --fakeroot env/01_pysam_SS3.sif env/01_pysam_SS3.def
+singularity build --force --fakeroot env/02_samtools_SS3.sif env/02_samtools_SS3.def
+singularity build --force --fakeroot env/03_trimgalore_SS3.sif env/03_trimgalore_SS3.def
+singularity build --force --fakeroot env/04_tracer_SS3.sif env/04_tracer_SS3.def
+# ------------------------------------------------------------------------------------
+# 01. SPLIT BAM files
+echo "================================================================================="
+./env/figlet.sif "1. Pysam"
 echo "================================================================================="
 # Split Aligned reads file
 if [ ! -d data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/ ];then
-  mkdir data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/
+  mkdir -p data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/
   echo "Created folder for Aligned reads"
-echo "./env/00_split_bam_SS3.sif data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.Aligned.out.bam \
+fi
+echo "./env/01_pysam_SS3.sif \
+data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.Aligned.out.bam \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.barcodes.csv \
 data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/ \
 --condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC"
 # Split unmapped reads file
 if [ ! -d data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/ ];then
-  mkdir data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/
+  mkdir -p data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/
   echo "Created folder for unmapped reads"
-echo "./env/00_split_bam_SS3.sif data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.unmapped.bam \
+fi
+echo "./env/01_pysam_SS3.sif \
+data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.unmapped.bam \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.barcodes.csv \
 data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/ \
 --condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC"
+# ------------------------------------------------------------------------------------
 # 01. Translate and merge
 echo "================================================================================="
-./env/figlet.sif "01 Translate to fastq and merge with samtools"
+./env/figlet.sif "2. Samtools"
 echo "================================================================================="
-echo "./env/01_merge_fastq.sif data/01_SS3_splitted_bams/${PLATE_NAME} \
+if [ ! -d data/02_SS3_merged_fastq/${PLATE_NAME}/ ];then
+  mkdir -p data/02_SS3_merged_fastq/${PLATE_NAME}/
+fi
+echo "./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/${PLATE_NAME} \
 data/02_SS3_merged_fastq/${PLATE_NAME}/ $NODES"
+# -------------------------------------------------------------------------------------
 # 02. Trim adapters
 echo "================================================================================="
-./env/figlet.sif "02 TrimGalore!"
+./env/figlet.sif "3. TrimGalore!"
 echo "================================================================================="
-echo "./env/02_trim_adapters.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
+if [ ! -d data/03_SS3_trimmed_fastq/${PLATE_NAME}/ ];then
+  mkdir -p data/03_SS3_trimmed_fastq/${PLATE_NAME}/
+fi
+echo "./env/03_trimgalore_SS3.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
 data/03_SS3_trimmed_fastq/${PLATE_NAME}/ 8"
+# -------------------------------------------------------------------------------------
 # 03. TCR assemble
 echo "================================================================================="
-./env/figlet.sif "03 TraCeR"
+./env/figlet.sif "4. TraCeR"
 echo "================================================================================="
 # Assemble alpha-beta
 if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/ ];then
-  mkdir data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/
+  mkdir -p data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/
   echo "Created folder for AB TCRs"
-echo "./env/03_assemble_TCR.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
+fi
+echo "./env/04_tracer_SS3.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
 data/03_SS3_trimmed_fastq/${PLATE_NAME}/GD $NODES 'AB'"
 # Assemble gamma-delta
 if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/ ];then
-  mkdir data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/
+  mkdir -p data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/
   echo "Created folder for GD TCRs"
-echo "./env/03_assemble_TCR.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
+fi
+echo "./env/04_tracer_SS3.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
 data/03_SS3_trimmed_fastq/${PLATE_NAME}/GD $NODES 'GD'"
+# -------------------------------------------------------------------------------------
 # 04. TCR collection
 echo "================================================================================="
-./env/figlet.sif "04 TCR collection"
+./env/figlet.sif "5. TCR collection"
 echo "================================================================================="
-echo "singularity exec env/00_split_bam_SS3.sif ./src/04_collect_assemble.py \
+echo "singularity exec env/01_pysam_SS3.sif ./src/04_collect_assemble.py \
 data/04_SS3_Tracer_assembled_cells/ results/"

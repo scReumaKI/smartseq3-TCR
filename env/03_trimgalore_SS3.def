@@ -14,6 +14,6 @@ from: fshiau/trim-galore:latest
     Usage
     -----
 
-    ./02_trim_adapters.sif <path/to/untrimmed_fastq/> <path/to/output> <nodes>
+    ./03_trimgalore_SS3.sif <path/to/untrimmed_fastq/> <path/to/output> <nodes>
 
-    See ./02_trim_adapters.sif --help for more info.
+    See ./03_trimgalore_SS3.sif --help for more info.

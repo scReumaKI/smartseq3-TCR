@@ -24,6 +24,6 @@ From: python:3.9
     Usage
     -----
 
-    ./00_split_bam_SS3.sif <path/to/bam/> <path/to/barcode/dataframe.csv> <path/to/output/>
+    ./01_pysam_SS3.sif <path/to/bam/> <path/to/barcode/dataframe.csv> <path/to/output/>
 
-    See ./00_split_bam_SS3.sif --help for more info.
+    See ./01_pysam_SS3.sif --help for more info.
