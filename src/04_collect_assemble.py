@@ -15,7 +15,7 @@
         the new convention Plate-tissue-well. For more details on the directory structure see
         README.md in this folder.
     out_file : string.
-        Path to the output folder where 'results_tracer.csv' will be saved.
+        Path and name of the output dataframe in .csv, tsv or xlsx form.
 
 """
 import os,sys
@@ -35,7 +35,6 @@ parser.add_argument('in_path', type=str, help='Path of the data folder.')
 parser.add_argument('out_file', type=str, help='Path of the output dataset.')
 args = parser.parse_args()
 in_path = args.in_path
-out_file = args.out_file + 'results_tracer.csv'
 AB_path = os.path.join(in_path,os.path.normpath('AB'))
 GD_path = os.path.join(in_path,os.path.normpath('GD'))
 # Loop over AB
@@ -78,5 +77,13 @@ for name,cell in cells.items():
         DF.loc[name,meta_colnames] = values
     cont = cont +1
 # Export dataset
-DF.to_csv(out_file,sep=',')
-print("Dataset exported in {}".format(out_file))
+file_type = args.out_file.split('.')[-1]
+if file_type == 'tsv':
+    DF.to_csv(args.out_file,sep='\t')
+elif file_type == 'xlsx':
+    DF.to_excel(args.out_file)
+elif file_type == 'csv':
+    DF.to_csv(args.out_file,sep=',')
+else:
+    raise NameError("Invalid output format. Has to be either .tsv, .csv or .xlsx.")
+print("Dataset exported in {}".format(args.out_file))

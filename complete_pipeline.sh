@@ -4,6 +4,11 @@
 # Author: Juan Sebastian Diaz Boada                                            #
 # Creation Date: 21/12/2022                                                    #
 # ============================================================================ #
+# Handling incomplete parameters
+if [ $# -lt 1 ]; then
+  echo "Error: No plate name was given." >&2
+  exit 1
+fi
 # Define the help function
 function help {
   # Print the usage message
@@ -17,7 +22,7 @@ function help {
   # Print a description of the script's parameters
   echo "Parameters:"
   echo "  PLATE_NAME     Name of the plate as prefix of sequencing files and folder names."
-  echo "  NODES          Number of nodes to use in parallel computations."
+  echo "  NODES          Number of nodes to use in parallel computations. Defaults to 10."
   echo ""
   # Print the list of options
   echo "Options:"
@@ -25,16 +30,17 @@ function help {
   # Exit with a success status code
   exit 0
 }
-
 # Parse the options and arguments
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   help
 fi
-
 PLATE_NAME=$1
-NODES=$2
+shift
+NODES=${1:-10}
+echo "Nodes = $NODES"
+# Handling missing data
 if [ ! -d data/00_SS3_raw_data/${PLATE_NAME}/ ];then
-  echo "There is no raw data for any plate in data/00_SS3_raw_data/"
+  echo "There is no raw data for plate ${PLATE_NAME} in data/00_SS3_raw_data/" >&2
   exit 1
 fi
 # -------------------------------------------------------------------------------------
@@ -80,7 +86,7 @@ echo "==========================================================================
 if [ ! -d data/02_SS3_merged_fastq/${PLATE_NAME}/ ];then
   mkdir -p data/02_SS3_merged_fastq/${PLATE_NAME}/
 fi
-echo "./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/${PLATE_NAME} \
+echo "./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/${PLATE_NAME}/ \
 data/02_SS3_merged_fastq/${PLATE_NAME}/ $NODES"
 # -------------------------------------------------------------------------------------
 # 02. Trim adapters
@@ -117,4 +123,4 @@ echo "==========================================================================
 ./env/figlet.sif "5. TCR collection"
 echo "================================================================================="
 echo "singularity exec env/01_pysam_SS3.sif ./src/04_collect_assemble.py \
-data/04_SS3_Tracer_assembled_cells/ results/"
+data/04_SS3_Tracer_assembled_cells/ results/${PLATE_NAME}.csv"
