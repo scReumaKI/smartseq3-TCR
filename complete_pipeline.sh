@@ -61,13 +61,13 @@ echo "./env/01_merge_fastq.sif data/01_SS3_splitted_bams/${PLATE_NAME} \
 data/02_SS3_merged_fastq/${PLATE_NAME}/ $NODES"
 # 02. Trim adapters
 echo "================================================================================="
-./env/figlet.sif "02 Trim adapters with TrimGalore!"
+./env/figlet.sif "02 TrimGalore!"
 echo "================================================================================="
 echo "./env/02_trim_adapters.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
 data/03_SS3_trimmed_fastq/${PLATE_NAME}/ 8"
 # 03. TCR assemble
 echo "================================================================================="
-./env/figlet.sif "03 Assemble TCR with TraCeR"
+./env/figlet.sif "03 TraCeR"
 echo "================================================================================="
 # Assemble alpha-beta
 if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/ ];then
@@ -81,3 +81,9 @@ if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/ ];then
   echo "Created folder for GD TCRs"
 echo "./env/03_assemble_TCR.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
 data/03_SS3_trimmed_fastq/${PLATE_NAME}/GD $NODES 'GD'"
+# 04. TCR collection
+echo "================================================================================="
+./env/figlet.sif "04 TCR collection"
+echo "================================================================================="
+echo "singularity exec env/00_split_bam_SS3.sif ./src/04_collect_assemble.py \
+data/04_SS3_Tracer_assembled_cells/ results/"
