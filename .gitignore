@@ -9,12 +9,14 @@ data/03_SS3_trimmed_fastq/*
 !data/03_SS3_trimmed_fastq/.gitkeep
 data/04_SS3_Tracer_assembled_cells/*
 !data/04_SS3_Tracer_assembled_cells/.gitkeep
+results/*
+!results/.gitkeep
 ### Python
 *.ipynb_checkpoints/
 #*cache
 #*#
 #*~
-#*\_\_pycache\_\_
+*\_\_pycache\_\_
 ### Containers
 *.sif
 
