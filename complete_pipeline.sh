@@ -45,14 +45,39 @@ if [ ! -d data/00_SS3_raw_data/${PLATE_NAME}/ ];then
 fi
 # -------------------------------------------------------------------------------------
 # 00. Container building
-singularity build --force --fakeroot env/figlet.sif env/figlet.def
+if [ ! -f env/figlet.sif ];then
+  singularity build --fakeroot env/figlet.sif env/figlet.def
+  echo "Built env/figlet.sif singularity container."
+else
+  echo "Container env/figlet.sif already exists. Using existing image..."
+fi
 echo "================================================================================="
 ./env/figlet.sif "0. Singularity"
 echo "================================================================================="
-singularity build --force --fakeroot env/01_pysam_SS3.sif env/01_pysam_SS3.def
-singularity build --force --fakeroot env/02_samtools_SS3.sif env/02_samtools_SS3.def
-singularity build --force --fakeroot env/03_trimgalore_SS3.sif env/03_trimgalore_SS3.def
-singularity build --force --fakeroot env/04_tracer_SS3.sif env/04_tracer_SS3.def
+if [ ! -f env/01_pysam_SS3.sif ];then
+  singularity build --fakeroot env/01_pysam_SS3.sif env/01_pysam_SS3.def
+  echo "Built env/01_pysam_SS3.sif singularity container."
+else
+  echo "Container env/01_pysam_SS3.sif already exists. Using existing image..."
+fi
+if [ ! -f env/02_samtools_SS3.sif ];then
+  singularity build --fakeroot env/02_samtools_SS3.sif env/02_samtools_SS3.def
+  echo "Built env/02_samtools_SS3.sif singularity container."
+else
+  echo "Container env/02_samtools_SS3.sif already exists. Using existing image..."
+fi
+if [ ! -f env/03_trimgalore_SS3.sif ];then
+  singularity build --fakeroot env/03_trimgalore_SS3.sif env/03_trimgalore_SS3.def
+  echo "Built env/03_trimgalore_SS3.sif singularity container."
+else
+  echo "Container env/03_trimgalore_SS3.sif already exists. Using existing image..."
+fi
+if [ ! -f env/04_tracer_SS3.sif ];then
+  singularity build --fakeroot env/04_tracer_SS3.sif env/04_tracer_SS3.def
+  echo "Built env/04_tracer_SS3.sif singularity container."
+else
+  echo "Container env/04_tracer_SS3.sif already exists. Using existing image..."
+fi
 # ------------------------------------------------------------------------------------
 # 01. SPLIT BAM files
 echo "================================================================================="
@@ -108,19 +133,23 @@ if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/ ];then
   mkdir -p data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/
   echo "Created folder for AB TCRs"
 fi
-echo "./env/04_tracer_SS3.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
-data/03_SS3_trimmed_fastq/${PLATE_NAME}/GD $NODES 'AB'"
+echo "./env/04_tracer_SS3.sif data/03_SS3_trimmed_fastq/${PLATE_NAME}/ \
+data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB $NODES 'AB'"
 # Assemble gamma-delta
 if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/ ];then
   mkdir -p data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/
   echo "Created folder for GD TCRs"
 fi
-echo "./env/04_tracer_SS3.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
-data/03_SS3_trimmed_fastq/${PLATE_NAME}/GD $NODES 'GD'"
+echo "./env/04_tracer_SS3.sif data/03_SS3_trimmed_fastq/${PLATE_NAME}/ \
+data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD $NODES 'GD'"
 # -------------------------------------------------------------------------------------
 # 04. TCR collection
 echo "================================================================================="
 ./env/figlet.sif "5. TCR collection"
 echo "================================================================================="
-echo "singularity exec env/01_pysam_SS3.sif ./src/04_collect_assemble.py \
-data/04_SS3_Tracer_assembled_cells/ results/${PLATE_NAME}.csv"
+if [ ! -d data/05_SS3_collected_TCRs/${PLATE_NAME}/ ];then
+  mkdir -p data/05_SS3_collected_TCRs/${PLATE_NAME}/
+fi
+singularity exec env/01_pysam_SS3.sif ./src/04_collect_assemble.py \
+data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/ \
+data/05_SS3_collected_TCRs/${PLATE_NAME}/${PLATE_NAME}.tsv

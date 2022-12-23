@@ -46,5 +46,8 @@ for DIR in ${INPUT_DIR}*;do
   CELL=$(basename $DIR)
   R1=${DIR}/${CELL}_R1_val_1.fq.gz
   R2=${DIR}/${CELL}_R2_val_2.fq.gz
+  echo "================================================================="
+  echo "Running TraCeR for cell $CELL"
+  echo "================================================================="
   tracer assemble --loci $LOCI -p $NODES -s Hsap $R1 $R2 $CELL $OUTPUT_DIR
 done

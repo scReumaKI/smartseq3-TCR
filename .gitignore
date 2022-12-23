@@ -9,6 +9,8 @@ data/03_SS3_trimmed_fastq/*
 !data/03_SS3_trimmed_fastq/.gitkeep
 data/04_SS3_Tracer_assembled_cells/*
 !data/04_SS3_Tracer_assembled_cells/.gitkeep
+data/05_SS3_collected_TCRs/*
+!data/05_SS3_collected_TCRs/.gitkeep
 results/*
 !results/.gitkeep
 ### Python
