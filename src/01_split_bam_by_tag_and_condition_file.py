@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 # =========================================================================== #
-# 00_split_bam_by_tag_and_condition_file.py                                   #
+# 01_split_bam_by_tag_and_condition_file.py                                   #
 # Authors: Daniel Ramsköld
 #          Juan Sebastian Diaz Boada                                          #
 # Creation Date: 15/11/22                                                     #

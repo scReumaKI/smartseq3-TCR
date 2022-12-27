@@ -2,7 +2,7 @@ bootstrap: docker
 from: fshiau/trim-galore:latest
 
 %runscript
-    ./src/02_run_trim_galore.sh "$@"
+    ./src/03_run_trim_galore.sh "$@"
 
 %labels
     Author: Juan Sebastian Diaz Boada

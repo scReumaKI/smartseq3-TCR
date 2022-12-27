@@ -2,7 +2,7 @@ bootstrap: docker
 from: staphb/samtools:1.16
 
 %runscript
-    ./src/01_bam2fastq.sh "$@"
+    ./src/02_bam2fastq.sh "$@"
 
 %labels
     Author: Juan Sebastian Diaz Boada

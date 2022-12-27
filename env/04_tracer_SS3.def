@@ -5,7 +5,7 @@ From: teichlab/tracer:latest
   export IGDATA=/ncbi-igblast-1.7.0/bin
 
 %runscript
-    ./src/03_assemble_trimmed_cells.sh "$@"
+    ./src/04_assemble_trimmed_cells.sh "$@"
 
 %labels
     Author: Juan Sebastian Diaz Boada

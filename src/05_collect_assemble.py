@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # =============================================================================================
-# read_assemble.py
+# 05_collect_assemble.py
 # Author: Juan Sebastian Diaz Boada
 # juan.sebastian.diaz.boada@ki.se
 # Creation Date: 15/03/2022
