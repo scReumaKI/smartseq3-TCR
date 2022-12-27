@@ -88,21 +88,21 @@ if [ ! -d data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/ ];then
   mkdir -p data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/
   echo "Created folder for Aligned reads"
 fi
-echo "./env/01_pysam_SS3.sif \
+./env/01_pysam_SS3.sif \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.Aligned.out.bam \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.barcodes.csv \
 data/01_SS3_splitted_bams/${PLATE_NAME}/Aligned/ \
---condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC"
+--condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC
 # Split unmapped reads file
 if [ ! -d data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/ ];then
   mkdir -p data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/
   echo "Created folder for unmapped reads"
 fi
-echo "./env/01_pysam_SS3.sif \
+./env/01_pysam_SS3.sif \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.unmapped.bam \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.barcodes.csv \
 data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/ \
---condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC"
+--condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC
 # ------------------------------------------------------------------------------------
 # 01. Translate and merge
 echo "================================================================================="
@@ -111,8 +111,8 @@ echo "==========================================================================
 if [ ! -d data/02_SS3_merged_fastq/${PLATE_NAME}/ ];then
   mkdir -p data/02_SS3_merged_fastq/${PLATE_NAME}/
 fi
-echo "./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/${PLATE_NAME}/ \
-data/02_SS3_merged_fastq/${PLATE_NAME}/ $NODES"
+./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/${PLATE_NAME}/ \
+data/02_SS3_merged_fastq/${PLATE_NAME}/ $NODES
 # -------------------------------------------------------------------------------------
 # 02. Trim adapters
 echo "================================================================================="
@@ -121,8 +121,8 @@ echo "==========================================================================
 if [ ! -d data/03_SS3_trimmed_fastq/${PLATE_NAME}/ ];then
   mkdir -p data/03_SS3_trimmed_fastq/${PLATE_NAME}/
 fi
-echo "./env/03_trimgalore_SS3.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
-data/03_SS3_trimmed_fastq/${PLATE_NAME}/ 8"
+./env/03_trimgalore_SS3.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
+data/03_SS3_trimmed_fastq/${PLATE_NAME}/ 8
 # -------------------------------------------------------------------------------------
 # 03. TCR assemble
 echo "================================================================================="
@@ -133,15 +133,15 @@ if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/ ];then
   mkdir -p data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB/
   echo "Created folder for AB TCRs"
 fi
-echo "./env/04_tracer_SS3.sif data/03_SS3_trimmed_fastq/${PLATE_NAME}/ \
-data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB $NODES 'AB'"
+./env/04_tracer_SS3.sif data/03_SS3_trimmed_fastq/${PLATE_NAME}/ \
+data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/AB $NODES 'AB'
 # Assemble gamma-delta
 if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/ ];then
   mkdir -p data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/
   echo "Created folder for GD TCRs"
 fi
-echo "./env/04_tracer_SS3.sif data/03_SS3_trimmed_fastq/${PLATE_NAME}/ \
-data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD $NODES 'GD'"
+./env/04_tracer_SS3.sif data/03_SS3_trimmed_fastq/${PLATE_NAME}/ \
+data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD $NODES 'GD'
 # -------------------------------------------------------------------------------------
 # 04. TCR collection
 echo "================================================================================="

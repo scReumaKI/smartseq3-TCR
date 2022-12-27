@@ -1,6 +1,6 @@
 # Ignore raw data but keep main data directory structure
-data/00_SS3_output/*
-!data/00_SS3_output/.gitkeep
+data/00_SS3_raw_data/*
+!data/00_SS3_raw_data/.gitkeep
 data/01_SS3_splitted_bams/*
 !data/01_SS3_splitted_bams/.gitkeep
 data/02_SS3_merged_fastq/*
