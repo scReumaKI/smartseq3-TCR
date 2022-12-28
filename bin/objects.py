@@ -330,7 +330,7 @@ def append_GD_data(in_file,cells):
       Raises
       ------
       ValueError
-          If the locus of a chain is not 'G' or 'G'. This can only happen if the cell is not
+          If the locus of a chain is not 'G' or 'D'. This can only happen if the cell is not
           correctly initialized.
     """
     # Read file

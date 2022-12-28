@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================================ #
-# 04_assemble_trimmed_cells.sh                                                    #
+# 04_assemble_trimmed_cells.sh                                                 #
 # Author: Juan Sebastian Diaz Boada                                            #
 # Creation Date: 13/12/2022                                                    #
 # ============================================================================ #

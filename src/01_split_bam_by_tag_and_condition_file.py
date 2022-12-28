@@ -2,7 +2,7 @@
 # coding: utf-8
 # =========================================================================== #
 # 01_split_bam_by_tag_and_condition_file.py                                   #
-# Authors: Daniel Ramsköld
+# Authors: Daniel Ramsköld                                                    #
 #          Juan Sebastian Diaz Boada                                          #
 # Creation Date: 15/11/22                                                     #
 # =========================================================================== #
@@ -18,15 +18,15 @@
     ----------
     bam_in : string.
         Relative path to the directory holding the multiplexed .bam file.
-    condition_csv : string.
+    condition_csv : string
         Relative path to the .csv file containing the mapping between the barcodes and the name of the cells.
-    bam_out : string.
+    bam_out : string
         Relative path to the folder where the output .bam files per cell are to be saved.
-    condition_tag_col : string (optional).
+    condition_tag_col : string (optional)
         Name of the column containing the barcodes in 'condition_csv'. Defaults to 'Barcode'.
     condition_name_col : string (optional)
         Name of the column containing the cell name in 'condition_csv'. Defaults to 'Name'.
-    bam_tag_flag : string (optional).
+    bam_tag_flag : string (optional)
         The tag in the bam file that contains the sample barcode. Defaults to 'BC' for zUMIs output.
     name_part_filer : string (optional)
         Use to limit itself to samples names that contain a particular substring. Defaults to None.
