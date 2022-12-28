@@ -46,7 +46,10 @@ cont = 1
 L = len(os.listdir(AB_path))
 for folder in os.listdir(AB_path):
     file = os.path.join(AB_path,folder,os.path.normpath('filtered_TCR_seqs/filtered_TCRs.txt'))
-    cell = create_cell_from_AB(file)
+    if os.path.exists(file):
+        cell = create_cell_from_AB(file)
+    else:
+        cell = Cell(folder)
     print("Cell {}, {}/{}".format(cell.name,cont,L))
     cells[cell.name] = cell
     cont = cont + 1
@@ -58,8 +61,9 @@ cont = 1
 L = len(os.listdir(GD_path))
 for folder in os.listdir(GD_path):
     file = os.path.join(GD_path,folder,os.path.normpath('filtered_TCR_seqs/filtered_TCRs.txt'))
+    if os.path.exists(file):
+        append_GD_data(file,cells)
     print("Cell {}, {}/{}".format(folder,cont,L))
-    append_GD_data(file,cells)
     cont = cont +1
 # Dataframe generation
 print("#######################################################################")

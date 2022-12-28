@@ -150,6 +150,6 @@ echo "==========================================================================
 if [ ! -d data/05_SS3_collected_TCRs/${PLATE_NAME}/ ];then
   mkdir -p data/05_SS3_collected_TCRs/${PLATE_NAME}/
 fi
-singularity exec env/01_pysam_SS3.sif ./src/04_collect_assemble.py \
+singularity exec env/01_pysam_SS3.sif ./src/05_collect_assemble.py \
 data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/ \
 data/05_SS3_collected_TCRs/${PLATE_NAME}/${PLATE_NAME}.tsv
