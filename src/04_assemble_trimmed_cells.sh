@@ -23,12 +23,11 @@ function help {
   # Exit with a success status code
   exit 0
 }
-
 # Parse the options and arguments
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   help
 fi
-
+# ---------------------------------------------------------------------------- #
 INPUT_DIR=$1
 OUTPUT_DIR=$2
 NODES=$3

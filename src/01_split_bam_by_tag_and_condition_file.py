@@ -6,7 +6,6 @@
 #          Juan Sebastian Diaz Boada                                          #
 # Creation Date: 15/11/22                                                     #
 # =========================================================================== #
-
 """ Splits a multiplexed .bam file into cell-wise .bam files.
 
     Loads a multiplexed .bam file 'bam_in' from zUMIs smart-seq3 sequencing protocol and

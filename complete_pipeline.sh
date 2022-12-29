@@ -43,7 +43,7 @@ if [ ! -d data/00_SS3_raw_data/${PLATE_NAME}/ ];then
   echo "There is no raw data for plate ${PLATE_NAME} in data/00_SS3_raw_data/" >&2
   exit 1
 fi
-# -------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # 00. Container building
 if [ ! -f env/figlet.sif ];then
   singularity build --fakeroot env/figlet.sif env/figlet.def
@@ -78,7 +78,7 @@ if [ ! -f env/04_tracer_SS3.sif ];then
 else
   echo "Container env/04_tracer_SS3.sif already exists. Using existing image..."
 fi
-# ------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # 01. SPLIT BAM files
 echo "================================================================================="
 ./env/figlet.sif "1. Pysam"
@@ -103,7 +103,7 @@ data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.filtered.tagged.unmapped.bam \
 data/00_SS3_raw_data/${PLATE_NAME}/${PLATE_NAME}.barcodes.csv \
 data/01_SS3_splitted_bams/${PLATE_NAME}/unmapped/ \
 --condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC
-# ------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # 01. Translate and merge
 echo "================================================================================="
 ./env/figlet.sif "2. Samtools"
@@ -113,7 +113,7 @@ if [ ! -d data/02_SS3_merged_fastq/${PLATE_NAME}/ ];then
 fi
 ./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/${PLATE_NAME}/ \
 data/02_SS3_merged_fastq/${PLATE_NAME}/ $NODES
-# -------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # 02. Trim adapters
 echo "================================================================================="
 ./env/figlet.sif "3. TrimGalore!"
@@ -123,7 +123,7 @@ if [ ! -d data/03_SS3_trimmed_fastq/${PLATE_NAME}/ ];then
 fi
 ./env/03_trimgalore_SS3.sif data/02_SS3_merged_fastq/${PLATE_NAME}/ \
 data/03_SS3_trimmed_fastq/${PLATE_NAME}/ 8
-# -------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # 03. TCR assemble
 echo "================================================================================="
 ./env/figlet.sif "4. TraCeR"
@@ -142,7 +142,7 @@ if [ ! -d data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD/ ];then
 fi
 ./env/04_tracer_SS3.sif data/03_SS3_trimmed_fastq/${PLATE_NAME}/ \
 data/04_SS3_Tracer_assembled_cells/${PLATE_NAME}/GD $NODES 'GD'
-# -------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # 04. TCR collection
 echo "================================================================================="
 ./env/figlet.sif "5. TCR collection"

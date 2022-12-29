@@ -5,6 +5,11 @@ A HPC cluster running a version of Linux with [Singularity](https://sylabs.io/si
 
 ### Expected directory structure (for 3 plates)
 ```bash
+├── bin
+│   ├── data_functions.py
+│   ├── objects.py
+│   └── tracer.conf
+├── complete_pipeline.sh
 ├── data
 │   ├── 00_SS3_raw_data
 │   │   ├── Plate_1
@@ -23,13 +28,14 @@ A HPC cluster running a version of Linux with [Singularity](https://sylabs.io/si
 │   ├── 02_SS3_merged_fastq
 │   ├── 03_SS3_trimmed_fastq
 │   ├── 04_SS3_Tracer_assembled_cells
-│   └── 04_SS3_collected_TCRs
+│   └── 05_SS3_collected_TCRs
 ├── env
 │   ├── 01_pysam_SS3.def
 │   ├── 02_samtools_SS3.def
 │   ├── 03_trimgalore_SS3.def
 │   ├── 04_tracer_SS3.def
 │   └── figlet.def
+├── merge_plates_with_clonality.sh
 ├── README.md
 ├── results
 └── src
@@ -37,7 +43,9 @@ A HPC cluster running a version of Linux with [Singularity](https://sylabs.io/si
     ├── 02_bam2fastq.sh
     ├── 03_run_trim_galore.sh
     ├── 04_assemble_trimmed_cells.sh
-    └── 05_collect_assemble.py
+    ├── 05_collect_assemble.py
+    └── 06_clonality_analysis.py
+
 ```
 # TL;DR
 1. Place the zUMIs output in the folder [`data/00_SS3_raw_data/`](data/00_SS3_raw_data/) named as the plate (`Plate_1` for example). Make sure that the following 3 files are in the plate subfolder:
@@ -48,14 +56,17 @@ A HPC cluster running a version of Linux with [Singularity](https://sylabs.io/si
 ```bash
 ./complete_pipeline.sh Plate_1
 ```
-for all the existing plates. The TCR dataset will be saved in [`results/`](results/Plate_1.tsv).
+for all the existing plates. The TCR dataset will be saved in [`data/05_SS3_collected_TCRs/`](data/05_SS3_collected_TCRs/), in a folder named as the plate.
 
 Optional: Specify the number of nodes for parallel execution after the plate name. By default it will run on 10 nodes.
 
-3. Clonality TO BE IMPLEMENTED
+3. Once the pipeline has been run for the desired plates, to **merge them and calculate the clones and their frequency**, run:
+```bash
+./merge_plates_with_clonality.sh
+```
+This will save the clonality dataset in [`results/`](results/)`TCR_clonality.tsv`
 
-
-
+Optional: To change the output name, use the flag `--out_file` and the path to the output file in `.csv`. `.tsv` or `.xlsx` format. To specify another input directory, use the flag `--input_dir`.
 
 # Detailed explanation: Run one module at a time.
 ## 0. Build singularity containers
@@ -80,7 +91,7 @@ and a barcode file `<plate_name>.barcodes.csv`, a tabular file with a column for
 Move your smartseq3 data to the folder [`data/00_SS3_raw_data/`](data/00_SS3_raw_data/) and to a sub-folder corresponding to a plate.
 This section uses a [container](env/01_pysam_SS3.def) with Python 3.9 and `pysam` that calls the python script [`/src/01_split_bam_by_tag_and_condition_file.py`](/src/01_split_bam_by_tag_and_condition_file.py) internally. The script extracts one `.bam` file per cell from each big `.bam` given the barcode and name of each cell.
 ```bash
-./env/01_pysam_SS3.sif path/to/bam path/to/barcode.csv output/dir --condition_tag_col <barcode_column> --condition_name_col <cell_name_column> --bam_tag_flag BC
+./env/01_pysam_SS3.sif bam_in condition_csv bam_out --condition_tag_col <barcode_column> --condition_name_col <cell_name_column> --bam_tag_flag BC
 ```
 Inputs:
 | Parameter | Type | Description |
@@ -94,13 +105,11 @@ Inputs:
 | `name_part_filer` | string (optional) | Use to limit itself to samples names that contain a particular substring. Defaults to None. |
 Example:
 ```bash
-> pwd
-/srv/shared/Common_New/Transcriptomics/TCR-myositis/smartseq3
-> ./env/01_pysam_SS3.sif data/00_SS3_raw_data/Plate_1/ Plate_1.filtered.tagged.Aligned.out.bam data/00_SS3_raw_data/Plate_1/Plate_1.barcodes.csv data/01_SS3_splitted_bams/Aligned/Plate_1/ --condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC
+./env/01_pysam_SS3.sif data/00_SS3_raw_data/Plate_1/ Plate_1.filtered.tagged.Aligned.out.bam data/00_SS3_raw_data/Plate_1/Plate_1.barcodes.csv data/01_SS3_splitted_bams/Aligned/Plate_1/ --condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC
 ```
 For detailed help, type `./env/01_pysam_SS3.sif --help` or `singularity run-help env/01_pysam_SS3.sif`
 ### Considerations
-+ Execution time on 20 nodes: ~1:10 hour for a plate of 384 cells.
++ Execution time: ~20 seconds per cell.
 + The previous procedure has to be done for the `.Aligned.out.bam` file and for the `.unmapped.bam` file.
 + The output directory `data/01_SS3_splitted_bams/Aligned/Plate_1/` has to be created before running the script.
 
@@ -110,7 +119,7 @@ The individual `.bam` files from the *Aligned* and *unmapped* files have to be c
 ### How to run
 This section uses a [container](env/02_samtools_SS3.def) with [`samtools`](https://github.com/samtools/samtools) executing the bash script [`src/02_bam2fastq.sh`](src/02_bam2fastq.sh), that translates the `.bam` files to `fastq.gz` format, and the concatenates the *Aligned* and *unmapped* per cell.
 ```bash
-./env/02_samtools_SS3.sif path/to/splitted/bams output/dir <nodes>
+./env/02_samtools_SS3.sif INPUT_DIR OUTPUT_DIR NODES
 ```
 Inputs to the bash script:
 | Parameter | Type | Description |
@@ -120,12 +129,11 @@ Inputs to the bash script:
 | `NODES` | int | Number of nodes to use in `samtools fastq`. |
 Example:
 ```bash
-./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/Plate_1/ \
-data/02_SS3_merged_fastq/Plate_1/ <nodes>
+./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/Plate_1/ data/02_SS3_merged_fastq/Plate_1/ 40
 ```
 For detailed help, type `./env/02_samtools_SS3.sif --help` or `singularity run-help env/02_samtools_SS3.sif`
 ### Considerations
-+ Execution time on 20 nodes:
++ Execution time on 40 nodes: ~20 seconds per cell
 + The script creates temporary folders that are deleted if the script terminates with exit status 0.
 + The output directory `data/02_SS3_merged_fastq/Plate_1/` has to be created before running the script.
 
@@ -135,7 +143,7 @@ The untrimmed fastq files of the cells are all saved on the directory [`data/02_
 ### How to run
 This section uses a [container](env/03_trimgalore_SS3.def) with [TrimGalore 0.6.7](https://github.com/FelixKrueger/TrimGalore) that calls the bash script [`src/03_run_trim_galore.sh`](src/03_run_trim_galore.sh), which trims the adapters of the concatenated fastq files and creates the output in a new folder named as the cell.
 ```bash
-./env/03_trimgalore_SS3.sif path/to/fastq/dir output/dir <nodes>
+./env/03_trimgalore_SS3.sif INPUT_DIR OUTPUT_DIR NODES
 ```
 Inputs to the bash script:
 | Parameter | Type | Description |
@@ -145,22 +153,21 @@ Inputs to the bash script:
 | `NODES` | int | Number of nodes to use in `trim_galore`. |
 Example:
 ```bash
-./env/03_trimgalore_SS3.sif data/02_SS3_merged_fastq/Plate_1/ \
-data/03_SS3_trimmed_fastq/Plate_1/ 8
+./env/03_trimgalore_SS3.sif data/02_SS3_merged_fastq/Plate_1/ data/03_SS3_trimmed_fastq/Plate_1/ 8
 ```
 For detailed help, type `./env/03_trimgalore_SS3.sif --help` or `singularity run-help env/03_trimgalore_SS3.sif`
 ### Considerations
-+ Execution time in Reuma: < 2h for a 384 cell plate
-+ Apparently trim_galore does not accept more than 8 cores. If provided more, it will truncate to 8
++ Execution time with 8 nodes: < 10 seconds per cell
++ Apparently trim_galore does not accept more than 8 cores. If provided more, it will truncate to 8.
 + The output directory `data/03_SS3_trimmed_fastq/Plate_1/` has to be created before running the script.
 
 ## 4. TCR assembling
 ### Context
 [TraCeR](https://github.com/Teichlab/tracer) is a package that uses [Bowtie](https://bowtie-bio.sourceforge.net/bowtie2/index.shtml), [Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki), [IgBlast](https://www.ncbi.nlm.nih.gov/igblast/faq.html#standalone) and [Kallisto](http://pachterlab.github.io/kallisto/), among other tools, to assemble T cell receptors (TCRs) from fastq files.
 ### How to run
-This section uses a [container](env/04_tracer_SS3.def) with [TraCeR](https://github.com/Teichlab/tracer) that calls the bash script [`src/04_assemble_trimmed_cells.sh](`.sh`), which calls `tracer assemble` iteratively over the files of multiple cells.
+This section uses a [container](env/04_tracer_SS3.def) with [TraCeR](https://github.com/Teichlab/tracer) that calls the bash script [`src/04_assemble_trimmed_cells.sh`](`src/04_assemble_trimmed_cells.sh`), which calls `tracer assemble` iteratively over the files of multiple cells.
 ```bash
-./env/04_tracer_SS3.sif path/to/cells output/dir <nodes> <loci>
+./env/04_tracer_SS3.sif INPUT_DIR OUTPUT_DIR NODES LOCI
 ```
 Inputs to the bash script:
 | Parameter | Type | Description |
@@ -180,10 +187,45 @@ For detailed help, type `./env/04_tracer_SS3.sif --help` or `singularity run-hel
 + The output directory `data/04_SS3_Tracer_assembled_cells/Plate_1/AB` has to be created before running the script.
 + The above commands should be run for all the loci-pairs separately, namely, for alpha-beta (`AB`) and for gamma-delta (`GD`).
 
-## 5. Clonality Dataset
+## 5. TCR collecting
 ### Context
-
+The [output of TraCeR](https://github.com/Teichlab/tracer#assemble-tcr-reconstruction) is a nested folder named as the cell containing several files. This steps goes through the output, reads the TCRs and condenses the information from all cells in a tabular dataset.
 ### How to run
+This step uses the same python container as in step 1, calling it with the `singularity exec` command to run the script [`src/05_collect_assemble.py`](src/05_collect_assemble.py).
+```bash
+singularity exec env/01_pysam_SS3.sif ./src/05_collect_assemble.py in_path out_path
+```
+Inputs to the bash script:
+| Parameter | Type | Description |
+| ------ | --- | ----- |
+| `in_path` | string | Relative path to the directory containing the TraCeR output for the plate. |
+| `out_path` | string | Relative path to the file (including extension) where the TCR dataset is going to be saved. Admitted formats are `.csv`, `.tsv` and `.xlsx`. |
+Example:
+```bash
+singularity exec env/01_pysam_SS3.sif ./src/05_collect_assemble.py data/04_SS3_Tracer_assembled_cells/Plate_1/ data/05_SS3_collected_TCRs/Plate_1/Plate_1.tsv
+```
+For detailed help, type `singularity exec env/01_pysam_SS3.sif --help`.
+### Considerations
++ Execution time: < 1 minute for a 384 cell plate
++ The output directory `data/05_SS3_collected_TCRs/Plate_1/` has to be created before running the script.
 
+## 6. Clonality Dataset
+### Context
+Once all the plates have their TCR dataset exported, it is of interest to know if there are TCRs that are present more than once. Considering that TCRs are created through VDJ recombination, it is unlikely that 2 identical TCRs are created independently, therefore repeated TCRs have to come from cloned cells. We call these TCRs **expanded clones**. This section merges the TCR datasets from different plates and identifies the expanded clones and their frequency.
+### How to run
+This step uses the same python container as in step 1, calling it with the `singularity exec` command to run the script [`src/06_clonality_analysis.py`](src/06_clonality_analysis.py). The script [`merge_plates_with_clonality.sh`](merge_plates_with_clonality.sh) wraps this calling and the inputs to the script to facilitate the use:
+```bash
+./merge_plates_with_clonality.sh --input_dir <input_dir> --out_file <out_file>
+```
+Inputs to the bash script:
+| Parameter | Type | Description |
+| ------ | --- | ----- |
+| `--input_dir` | string (optional) | Relative path to the directory containing the TCR datasets. Defaults to `data/05_SS3_collected_TCRs`. |
+| `--out_file` | string (optional) | Relative path to the file (including extension) where the clonality dataset is going to be saved. Admitted formats are `.csv`, `.tsv` and `.xlsx`. Defaults to `results/TCR_clonality.tsv`. |
+Example:
+```bash
+./merge_plates_with_clonality.sh
+```
+For detailed help, type `./merge_plates_with_clonality.sh --help`.
 ### Considerations
 + Execution time: < 1 minute for a 384 cell plate
