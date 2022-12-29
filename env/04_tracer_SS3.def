@@ -3,6 +3,7 @@ From: teichlab/tracer:latest
 
 %environment
   export IGDATA=/ncbi-igblast-1.7.0/bin
+  export TRACER_CONF=./bin/tracer.conf
 
 %runscript
     ./src/04_assemble_trimmed_cells.sh "$@"
