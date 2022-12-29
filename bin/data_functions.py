@@ -1,7 +1,7 @@
 """ Specific functions for TCR dataset treatment in pandas.
 
         * read_dataframe
-        * group_col_with_freq
+        * group_with_freq
         * generate_clone_sets
         * group_sets
         * concat_seqs_in_set
@@ -43,13 +43,15 @@ def read_dataframe(in_file):
     else:
         raise NameError("Invalid input format. Has to be either .tsv, .csv or .xlsx.")
 #---------------------------------------------------------------------------------------------------#
-def group_col_with_freq(df,col,group_unique=False):
+def group_with_freq(df,col,group_unique=False,new_name=None):
     """ Groups identical values and calculates their frequency, returning an updated dataframe.
 
         Calculates the frequency of each value in the column named 'col' from
-        dataframe 'df' adding them into a column named 'freq_'+col. It also assigns a group number
-        to each unique value in the column 'group_'+col. If the parameter 'include_single_vals'
-        is False, it groups sequences that appear only once in one group labelled as -1.
+        dataframe 'df', adding it into a column named 'freq_'+col. It also assigns a group number
+        to each unique value in the column 'group_'+col. If the parameter 'group_unique'
+        is True, it groups sequences that appear only once in one group labelled as -1. The suffix
+        of the new column is by default the name of 'col', but can be changed adding a string as
+        'new_name' parameter.
 
         Parameters
         ----------
@@ -57,29 +59,32 @@ def group_col_with_freq(df,col,group_unique=False):
             Dataframe with the column of values to group
         col : string
             Name of the column holding the values to analyze.
-        include_single_vals : bool, optional
-            Wether to include the unconnected samples independently or grouped together in a
-            separate group. Default is True.
+        group_unique : bool, optional
+            Wether to group samples that only appear once in a group labelled '-1' or mantain each
+            unique element as a separate group. Default is False.
+        new_name : string, optional
+            Suffix of the neame of the new column, instead of using the name of the old column.
+            Default is None.
 
         Returns
-
         -------
         pd.DataFrame
             Dataframe with additional columns for group number and frequency.
     """
     DF = df.copy()
-    freq_col_name = 'freq_' + col
-    group_col_name = 'group_' + col
+    freq_col_name = 'freq_' + col if new_name is None else 'freq_' + new_name
+    group_col_name = 'group_'+col if new_name is None else 'group_' + new_name
+
     DF[freq_col_name] = DF[col].map(DF[col].value_counts()).astype(pd.Int64Dtype())
     DF.sort_values(by=[freq_col_name,col],ascending=False,inplace=True)
-    if not group_unique:
-        seq2idx = {}
-        seqs = DF[col].unique()
-    else:
+    if group_unique:
         # Default dict for cluster numbers. Return -1 if unseen instance
         seq2idx = defaultdict(lambda : -1)
         n_rep = len(DF.loc[DF[freq_col_name]!=1])
         seqs = DF.loc[:,col].iloc[:n_rep].unique()
+    else:
+        seq2idx = {}
+        seqs = DF[col].unique()
 
     for n,g in enumerate(seqs):
         seq2idx[g]= n

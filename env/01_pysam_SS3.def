@@ -3,12 +3,13 @@ From: python:3.9
 
 %post
     pip install pandas
+    pip install openpyxl
     pip install pysam
     pip install tqdm
     pip install jupyter
 
 %environment
-    # Modify environment variables here
+    export PYTHONWARNINGS="ignore"
 
 %runscript
     ./src/01_split_bam_by_tag_and_condition_file.py "$@"
