@@ -103,6 +103,7 @@ Inputs:
 | `condition_name_col` | string (optional) | Name of the column containing the cell name in 'condition_csv'. Defaults to 'Name'. |
 | `bam_tag_flag` | string (optional) | The tag in the bam file that contains the sample barcode. Defaults to 'BC' for zUMIs output. |
 | `name_part_filer` | string (optional) | Use to limit itself to samples names that contain a particular substring. Defaults to None. |
+
 Example:
 ```bash
 ./env/01_pysam_SS3.sif data/00_SS3_raw_data/Plate_1/ Plate_1.filtered.tagged.Aligned.out.bam data/00_SS3_raw_data/Plate_1/Plate_1.barcodes.csv data/01_SS3_splitted_bams/Aligned/Plate_1/ --condition_tag_col Barcode --condition_name_col Name --bam_tag_flag BC
@@ -127,6 +128,7 @@ Inputs to the bash script:
 | `INPUT_DIR` | string | Directory with the aligned single cell bam files. |
 | `OUTPUT_DIR` | string | Directory where the fastq.gz files will be written. |
 | `NODES` | int | Number of nodes to use in `samtools fastq`. |
+
 Example:
 ```bash
 ./env/02_samtools_SS3.sif data/01_SS3_splitted_bams/Plate_1/ data/02_SS3_merged_fastq/Plate_1/ 40
@@ -151,6 +153,7 @@ Inputs to the bash script:
 | `INPUT_DIR` | string | Directory with the merged fastq files. |
 | `OUTPUT_DIR` | string | Directory where the trimmed fastq.gz files will be written. |
 | `NODES` | int | Number of nodes to use in `trim_galore`. |
+
 Example:
 ```bash
 ./env/03_trimgalore_SS3.sif data/02_SS3_merged_fastq/Plate_1/ data/03_SS3_trimmed_fastq/Plate_1/ 8
@@ -176,6 +179,7 @@ Inputs to the bash script:
 | `OUTPUT_DIR` | string | Relative path to the directory where the TCR files will be saved. |
 | `NODES` | int | Number of nodes to use in `tracer assemble`. |
 | `LOCI` | str | 'AB' for assembling alpha-beta chains and 'GD' for assembling gamma-delta chains." |
+
 Example:
 ```bash
 ./env/04_tracer_SS3.sif data/03_SS3_trimmed_fastq/Plate_1/ \
@@ -200,6 +204,7 @@ Inputs to the bash script:
 | ------ | --- | ----- |
 | `in_path` | string | Relative path to the directory containing the TraCeR output for the plate. |
 | `out_path` | string | Relative path to the file (including extension) where the TCR dataset is going to be saved. Admitted formats are `.csv`, `.tsv` and `.xlsx`. |
+
 Example:
 ```bash
 singularity exec env/01_pysam_SS3.sif ./src/05_collect_assemble.py data/04_SS3_Tracer_assembled_cells/Plate_1/ data/05_SS3_collected_TCRs/Plate_1/Plate_1.tsv
@@ -220,8 +225,9 @@ This step uses the same python container as in step 1, calling it with the `sing
 Inputs to the bash script:
 | Parameter | Type | Description |
 | ------ | --- | ----- |
-| `--input_dir` | string (optional) | Relative path to the directory containing the TCR datasets. Defaults to `data/05_SS3_collected_TCRs`. |
-| `--out_file` | string (optional) | Relative path to the file (including extension) where the clonality dataset is going to be saved. Admitted formats are `.csv`, `.tsv` and `.xlsx`. Defaults to `results/TCR_clonality.tsv`. |
+| `input_dir` | string (optional) | Relative path to the directory containing the TCR datasets. Defaults to `data/05_SS3_collected_TCRs`. |
+| `out_file` | string (optional) | Relative path to the file (including extension) where the clonality dataset is going to be saved. Admitted formats are `.csv`, `.tsv` and `.xlsx`. Defaults to `results/TCR_clonality.tsv`. |
+
 Example:
 ```bash
 ./merge_plates_with_clonality.sh
