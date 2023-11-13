@@ -46,10 +46,15 @@ cont = 1
 L = len(os.listdir(AB_path))
 for folder in os.listdir(AB_path):
     file = os.path.join(AB_path,folder,os.path.normpath('filtered_TCR_seqs/filtered_TCRs.txt'))
-    if os.path.exists(file):
-        cell = create_cell_from_AB(file)
-    else:
-        cell = Cell(folder)
+    try:
+        if os.path.exists(file):
+            cell = create_cell_from_AB(file)
+        else:
+            cell = Cell(folder)
+    except Exception as exc:
+        print(f"Invalid or malformed Tracer output for cell {folder}")
+        print(f"{exc}")
+        continue
     print("Cell {}, {}/{}".format(cell.name,cont,L))
     cells[cell.name] = cell
     cont = cont + 1
